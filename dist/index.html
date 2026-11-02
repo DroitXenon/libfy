@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f9f5">
+  <meta name="description" content="Find the right open-source libraries for your next project. Discover, save, and compare developer tools with libfy.">
+  <title>libfy — Good projects start with the right libraries.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="header"><a class="brand" href="/" aria-label="libfy home"><span class="brand-icon">l<span>f</span></span>libfy<span class="brand-dot">.</span></a><nav aria-label="Main navigation"><button class="nav-link active" data-view="discover">Discover</button><button class="nav-link" data-view="collections">My collection <span id="saved-count">0</span></button></nav><div class="header-right"><a href="https://github.com/topics/javascript-library" target="_blank" rel="noopener" class="github-link"><span data-icon="github"></span><span>Made for builders</span><span class="external">↗</span></a><button class="button small" data-finder><span data-icon="sparkles"></span> Find my stack</button></div></header>
+  <main>
+    <section class="hero"><div class="hero-copy"><div class="eyebrow"><span class="status-dot"></span> LESS SEARCHING. MORE BUILDING.</div><h1>Big ideas meet<br>the <em>right libraries.</em><svg viewBox="0 0 390 15" aria-hidden="true"><path d="M3 10 Q175 -4 387 7 M42 14 Q202 4 337 10"/></svg></h1><p>Your next project deserves a great starting point.<br>Discover open-source libraries that fit what you’re building.</p><button class="button" data-finder><span data-icon="sparkles"></span> Tell us what you’re building <span>↗</span></button><span class="hero-note">A little direction. A lot less digging.</span></div><div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-cross cross-one">+</span><span class="art-cross cross-two">+</span><span class="art-dot"></span><div class="floating-chip chip-code">&lt;/&gt;</div><div class="floating-chip chip-react">⚛</div><div class="floating-chip chip-braces">{ }</div><div class="floating-chip chip-stack">▱<br>▱<br>▱</div><div class="stack-card back-card"></div><div class="stack-card middle-card"></div><div class="stack-card front-card"><span class="stack-top"><span class="mini-brand">l<span>f</span></span><span class="stack-dots">•••</span></span><span class="art-label">YOUR NEXT GREAT IDEA</span><strong>Built on<br>good choices.</strong><span class="art-line"></span><span class="art-card-bottom"><span class="art-check">✓</span> The right tools. All together.</span></div><span class="art-caption">a better foundation for your next big thing</span></div></section>
+    <section class="catalog" id="discover"><div class="section-heading"><div><div class="eyebrow muted">THE DEVELOPER’S TOOLBOX</div><h2 id="catalog-title">Find your next building block<span>.</span></h2></div><span class="curated"><span data-icon="check-circle"></span> Small catalog. Thoughtful choices.</span></div>
+    <div class="search-row"><div class="search-field"><span data-icon="search"></span><input id="search" type="search" placeholder="Search libraries, tools, or what you want to build…" aria-label="Search libraries"><kbd>/</kbd></div><label class="language-select"><span data-icon="code"></span><select id="language" aria-label="Filter by language"><option>All languages</option><option>JavaScript</option><option>TypeScript</option></select><span>⌄</span></label></div>
+    <div class="category-row" role="group" aria-label="Filter by category" id="categories"></div>
+    <div id="project-banner" class="project-banner" hidden></div>
+    <div class="results-bar"><span id="results-count" aria-live="polite"></span><label>Sort by <select id="sort" aria-label="Sort libraries"><option value="curated">Curated order</option><option value="name">Name: A–Z</option></select><span>⌄</span></label></div>
+    <div class="library-grid" id="library-grid"></div>
+    <div class="catalog-foot"><span><span class="little-star">✳</span> Good tools make room for great ideas.</span><span>A handpicked starting point, always growing.</span></div></section>
+    <section class="bottom-banner"><div class="banner-icon"><span data-icon="sparkles"></span></div><div><h3>Have the idea. Need the ingredients?</h3><p>Describe your project. Find a few good places to start.</p></div><button class="button light" data-finder>Let’s find your stack <span>↗</span></button></section>
+  </main>
+  <footer><a class="brand" href="/">libfy<span class="brand-dot">.</span></a><span>A little less searching. A little more shipping.</span><span>Built for the things you haven’t built yet. <span class="footer-spark">✳</span></span></footer>
+  <div id="compare-tray" class="compare-tray" hidden><span><strong id="compare-count">0</strong> libraries selected</span><button id="clear-compare" class="text-button">Clear</button><button id="open-compare" class="button small">Compare libraries <span>↗</span></button></div>
+  <dialog id="modal"><button id="close-modal" class="close-modal" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+</body>
+</html>
