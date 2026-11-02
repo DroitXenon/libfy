@@ -54,4 +54,64 @@ function resetFilters() {
   render();
 }
 
+// Collections stay on this device; gracefully support browsers that block storage.
+try {
+  const stored = JSON.parse(localStorage.getItem('libfy-saved') || '[]');
+  if (Array.isArray(stored)) state.saved = stored.filter(id => libraries.some(lib => lib.id === id));
+} catch { /* An unavailable or invalid collection starts empty. */ }
+
+function notify(message) {
+  $('#toast').textContent = message; $('#toast').classList.add('visible');
+  clearTimeout(notify.timer); notify.timer = setTimeout(() => $('#toast').classList.remove('visible'), 2800);
+}
+
+let modalTrigger;
+function showModal(content, label) {
+  modalTrigger = document.activeElement;
+  $('#modal-content').innerHTML = content;
+  $('#modal').setAttribute('aria-label', label);
+  $('#modal').showModal();
+}
+$('#close-modal').addEventListener('click', () => $('#modal').close());
+$('#modal').addEventListener('click', event => { if (event.target === $('#modal')) { const rect = $('#modal').getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) $('#modal').close(); } });
+$('#modal').addEventListener('close', () => { if (modalTrigger?.isConnected) modalTrigger.focus(); });
+
+document.addEventListener('click', async event => {
+  const save = event.target.closest('[data-save]');
+  if (save) {
+    const id = save.dataset.save;
+    state.saved = state.saved.includes(id) ? state.saved.filter(item => item !== id) : [...state.saved, id];
+    try { localStorage.setItem('libfy-saved', JSON.stringify(state.saved)); }
+    catch { notify('Saved for this visit. Browser storage is unavailable.'); }
+    render();
+    document.querySelector(`[data-save="${id}"]`)?.focus();
+  }
+  const detail = event.target.closest('[data-detail]');
+  if (detail) {
+    const lib = libraries.find(item => item.id === detail.dataset.detail);
+    showModal(`<div class="detail-header"><span class="library-mark" style="color:${lib.color};background:${lib.bg}">${lib.mark}</span><div><div class="eyebrow muted">${lib.category}</div><h2>${lib.name}</h2></div></div><p class="modal-description">${lib.description}</p><div class="tags">${lib.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div><div class="detail-section"><h3>A good fit for</h3><p>${lib.fit}</p><h3>Keep in mind</h3><p>${lib.tradeoff}</p></div><div class="install"><code>${lib.install}</code><button data-copy="${lib.id}">Copy command</button></div><div class="detail-actions"><a class="button small" href="${lib.url}" target="_blank" rel="noopener">Official documentation ↗</a></div><p class="finder-note">Install command shown for ${lib.id === 'tanstack-query' || lib.id === 'lucide' ? 'React' : lib.ecosystem}. Check official docs for setup and compatibility.</p>`, `${lib.name} library details`);
+  }
+  const copy = event.target.closest('[data-copy]');
+  if (copy) {
+    const lib = libraries.find(item => item.id === copy.dataset.copy);
+    try { await navigator.clipboard.writeText(lib.install); copy.textContent = 'Copied ✓'; }
+    catch { copy.textContent = 'Select the command to copy'; }
+  }
+});
+
+document.addEventListener('change', event => {
+  const checkbox = event.target.closest('[data-compare]');
+  if (!checkbox) return;
+  const id = checkbox.dataset.compare;
+  if (checkbox.checked && state.compare.length >= 3) { checkbox.checked = false; notify('Compare up to 3 libraries at a time.'); return; }
+  state.compare = checkbox.checked ? [...state.compare, id] : state.compare.filter(item => item !== id);
+  render(); document.querySelector(`[data-compare="${id}"]`)?.focus();
+});
+$('#clear-compare').addEventListener('click', () => { state.compare = []; render(); });
+$('#open-compare').addEventListener('click', () => {
+  const selected = state.compare.map(id => libraries.find(lib => lib.id === id));
+  const rows = [['Category', 'category'], ['Ecosystem', 'ecosystem'], ['Approach', 'approach'], ['Best for', 'fit'], ['Consideration', 'tradeoff']];
+  showModal(`<div class="eyebrow muted">SIDE BY SIDE</div><h2 class="modal-title">Good choices start here.</h2><p class="modal-description">Find the right fit for your project’s needs.</p><div class="table-scroll"><table class="compare-table"><thead><tr><th scope="col">Library</th>${selected.map(lib => `<th scope="col">${lib.name}</th>`).join('')}</tr></thead><tbody>${rows.map(([title, key]) => `<tr><th scope="row">${title}</th>${selected.map(lib => `<td>${lib[key]}</td>`).join('')}</tr>`).join('')}<tr><th scope="row">Explore</th>${selected.map(lib => `<td><a href="${lib.url}" target="_blank" rel="noopener">Official docs ↗</a></td>`).join('')}</tr></tbody></table></div>`, 'Compare libraries');
+});
+
 render();
