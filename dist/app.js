@@ -45,8 +45,28 @@ document.addEventListener('click', event => {
   const view = event.target.closest('[data-view]');
   if (view) { state.view = view.dataset.view; render(); $('#discover').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   if (event.target.closest('#reset-filters')) resetFilters();
+  if (event.target.closest('[data-finder]')) openFinder();
+  const example = event.target.closest('[data-example]');
+  if (example) { $('#project-description').value = example.dataset.example; $('#project-description').focus(); }
+  if (event.target.closest('#clear-project')) resetFilters();
 });
 document.addEventListener('keydown', event => { if (event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) && !$('#modal').open) { event.preventDefault(); $('#search').focus(); } });
+
+function openFinder() {
+  showModal(`<div class="eyebrow muted">A GOOD PLACE TO START</div><h2 class="modal-title">What are you building?</h2><p class="modal-description">Tell us what your project needs. We’ll match it with relevant libraries from our curated catalog.</p><form id="finder-form"><label class="finder-label" for="project-description">Your project, in a few words</label><textarea id="project-description" required minlength="3" maxlength="600" placeholder="A React dashboard with charts, API data, and a signup form…">${escapeHtml(state.project)}</textarea><div class="finder-examples"><button type="button" data-example="A React dashboard with charts and API data">An analytics dashboard ↗</button><button type="button" data-example="A backend API with a SQL database and validation">A backend API ↗</button><button type="button" data-example="A calendar booking app with dates and forms">A booking app ↗</button></div><button class="button" type="submit">${icon('sparkles')} Find my building blocks ↗</button><p class="finder-note">Keyword-based matching across ${libraries.length} curated libraries. A starting point to explore, with no AI service or account required.</p></form>`, 'Find libraries for your project');
+  $('#project-description').focus();
+}
+document.addEventListener('submit', event => {
+  if (event.target.id !== 'finder-form') return;
+  event.preventDefault();
+  const description = $('#project-description').value.trim();
+  if (description.length < 3) { $('#project-description').setCustomValidity('Describe your project in at least 3 characters.'); $('#project-description').reportValidity(); return; }
+  resetFilters(); state.project = description;
+  $('#project-banner').innerHTML = `<span>${icon('sparkles')} <strong>Your project:</strong> ${escapeHtml(description)}</span><button id="clear-project" aria-label="Clear project matching">×</button>`;
+  $('#project-banner').hidden = false;
+  render(); $('#modal').close(); $('#discover').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+document.addEventListener('input', event => { if (event.target.id === 'project-description') event.target.setCustomValidity(''); });
 
 function resetFilters() {
   Object.assign(state, { query: '', category: 'All libraries', language: 'All languages', project: '', view: 'discover' });
